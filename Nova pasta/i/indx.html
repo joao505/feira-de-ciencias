@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jogo de Adivinhar Sons - Brasil</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="game-container">
+        <header>
+            <h1>Jogo de Adivinhar Sons</h1>
+            <p>Ouça o som e adivinhe do que se trata!</p>
+        </header>
+        
+        <div class="score">Pontuação: <span id="score">0</span></div>
+        
+        <div class="volume-control">
+            <label for="volume">Volume: </label>
+            <input type="range" id="volume" min="0" max="1" step="0.1" value="0.7">
+        </div>
+        
+        <div class="sound-container">
+            <button id="play-sound" class="sound-btn">🔊</button>
+        </div>
+        
+        <div id="options" class="options">
+            <!-- Opções serão inseridas aqui pelo JavaScript -->
+        </div>
+        
+        <div id="feedback" class="feedback"></div>
+        
+        <button id="next-btn" class="next-btn">Próximo Som</button>
+        
+        <div id="game-over" class="game-over" style="display: none;">
+            <h2>Fim do Jogo!</h2>
+            <p>Sua pontuação final: <span id="final-score">0</span></p>
+            <button id="restart-btn" class="restart-btn">Jogar Novamente</button>
+        </div>
+    </div>
+
+    <script>
+        // Sons brasileiros e suas opções
+        const sounds = [
+            {
+                sound: 'https://www.soundjay.com/nature/sounds/bird-chirp-01.mp3',
+                options: ['Pássaro', 'Cachorro', 'Gato', 'Vaca'],
+                correct: 0,
+                alt: "Canto típico de pássaro brasileiro como sabiá ou canário"
+            },
+            {
+                sound: 'https://www.soundjay.com/mechanical/sounds/truck-horn-01.mp3',
+                options: ['Carro', 'Buzina de ônibus', 'Bicicleta', 'Trem'],
+                correct: 1,
+                alt: "Buzina de ônibus urbano em uma rua movimentada"
+            },
+            {
+                sound: 'https://www.soundjay.com/human/sounds/sneezing-01.mp3',
+                options: ['Tosse', 'Espirro', 'Gargalhada', 'Choro'],
+                correct: 1,
+                alt: "Som de pessoa espirrando"
+            },
+            {
+                sound: 'https://www.soundjay.com/misc/sounds/bell-ring-01.mp3',
+                options: ['Sino de igreja', 'Alarme', 'Telefone', 'Despertador'],
+                correct: 0,
+                alt: "Sino tradicional de igreja brasileira"
+            },
+            {
+                sound: 'https://www.soundjay.com/misc/sounds/rain-01.mp3',
+                options: ['Chuva', 'Cachoeira', 'Ondas do mar', 'Vento'],
+                correct: 0,
+                alt: "Som de chuva tropical caindo em telhado"
+            }
+        ];
+        
+        // Elementos do DOM
+        const playSoundBtn = document.getElementById('play-sound');
+        const optionsContainer = document.getElementById('options');
+        const feedbackElement = document.getElementById('feedback');
+        const nextBtn = document.getElementById('next-btn');
+        const scoreElement = document.getElementById('score');
+        const gameOverElement = document.getElementById('game-over');
+        const finalScoreElement = document.getElementById('final-score');
+        const restartBtn = document.getElementById('restart-btn');
+        const volumeControl = document.getElementById('volume');
+        
+        // Variáveis do jogo
+        let currentSoundIndex = 0;
+        let score = 0;
+        let audio = new Audio();
+        let selectedOption = null;
+        let gameActive = true;
+        
+        // Iniciar o jogo
+        function initGame() {
+            loadSound();
+            updateScore();
+            volumeControl.addEventListener('input', () => {
+                audio.volume = volumeControl.value;
+            });
+            
+            playSoundBtn.addEventListener('click', playCurrentSound);
+            nextBtn.addEventListener('click', loadNextSound);
+            restartBtn.addEventListener('click', restartGame);
+        }
+        
+        // Carregar o som atual
+        function loadSound() {
+            if (!gameActive) return;
+            
+            const currentSound = sounds[currentSoundIndex];
+            audio.src = currentSound.sound;
+            audio.volume = volumeControl.value;
+            
+            // Limpar estado anterior
+            optionsContainer.innerHTML = '';
+            feedbackElement.textContent = '';
+            feedbackElement.className = 'feedback';
+            nextBtn.style.display = 'none';
+            playSoundBtn.disabled = false;
+            selectedOption = null;
+            
+            // Atualizar a imagem descritiva do som
+            playSoundBtn.setAttribute('aria-label', currentSound.alt);
+            
+            // Criar opções
+            currentSound.options.forEach((option, index) => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.textContent = option;
+                btn.addEventListener('click', () => selectOption(index));
+                optionsContainer.appendChild(btn);
+            });
+        }
+        
+        // Reproduzir o som atual
+        function playCurrentSound() {
+            if (audio.paused) {
+                audio.play();
+            } else {
+                audio.currentTime = 0;
+            }
+        }
+        
+        // Selecionar uma opção
+        function selectOption(optionIndex) {
+            if (selectedOption !== null || !gameActive) return;
+            
+            selectedOption = optionIndex;
+            const currentSound = sounds[currentSoundIndex];
+            const optionButtons = document.querySelectorAll('.option-btn');
+            
+            // Desabilitar todos os botões
+            optionButtons.forEach(btn => {
+                btn.disabled = true;
+            });
+            
+            // Marcar resposta correta/incorreta
+            if (optionIndex === currentSound.correct) {
+                optionButtons[optionIndex].classList.add('correct');
+                feedbackElement.textContent = 'Correto! Parabéns!';
+                feedbackElement.classList.add('correct');
+                score++;
+                updateScore();
+            } else {
+                optionButtons[optionIndex].classList.add('incorrect');
+                optionButtons[currentSound.correct].classList.add('correct');
+                feedbackElement.textContent = `Incorreto! Era: ${currentSound.options[currentSound.correct]}`;
+                feedbackElement.classList.add('incorrect');
+            }
+            
+            // Mostrar botão de próximo
+            nextBtn.style.display = 'inline-block';
+            playSoundBtn.disabled = true;
+        }
+        
+        // Carregar próximo som
+        function loadNextSound() {
+            currentSoundIndex++;
+            
+            if (currentSoundIndex < sounds.length) {
+                loadSound();
+            } else {
+                endGame();
+            }
+        }
+        
+        // Atualizar pontuação
+        function updateScore() {
+            scoreElement.textContent = score;
+        }
+        
+        // Finalizar o jogo
+        function endGame() {
+            gameActive = false;
+            gameOverElement.style.display = 'block';
+            document.querySelector('.sound-container').style.display = 'none';
+            document.querySelector('.options').style.display = 'none';
+            finalScoreElement.textContent = score;
+        }
+        
+        // Reiniciar o jogo
+        function restartGame() {
+            currentSoundIndex = 0;
+            score = 0;
+            gameActive = true;
+            gameOverElement.style.display = 'none';
+            document.querySelector('.sound-container').style.display = 'block';
+            document.querySelector('.options').style.display = 'grid';
+            updateScore();
+            loadSound();
+        }
+        
+        // Iniciar o jogo quando a página carregar
+        window.addEventListener('DOMContentLoaded', initGame);
+    </script>
+</body>
+</html>

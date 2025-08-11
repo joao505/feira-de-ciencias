@@ -1,0 +1,178 @@
+:root {
+            --primary: #2E7D32;
+            --secondary: #FFC107;
+            --accent: #E91E63;
+            --background: #F5F5F5;
+            --text: #212121;
+}
+        
+ body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--background);
+            color: var(--text);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+}
+        
+header {
+            text-align: center;
+            margin-bottom: 30px;
+}
+        
+h1 {
+            color: var(--primary);
+            margin-bottom: 10px;
+}
+        
+.game-container {
+            background-color: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            padding: 30px;
+            width: 90%;
+            max-width: 600px;
+            text-align: center;
+}
+        
+        .score {
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+            color: var(--primary);
+            font-weight: bold;
+        }
+        
+        .sound-container {
+            margin: 20px 0;
+        }
+        
+        .sound-btn {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 80px;
+            height: 80px;
+            font-size: 2rem;
+            cursor: pointer;
+            transition: transform 0.2s, background-color 0.2s;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .sound-btn:hover {
+            transform: scale(1.05);
+            background-color: #1B5E20;
+        }
+        
+        .sound-btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+        
+        .options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin: 30px 0;
+        }
+        
+        .option-btn {
+            background-color: white;
+            border: 2px solid var(--primary);
+            border-radius: 8px;
+            padding: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 1rem;
+        }
+        
+        .option-btn:hover {
+            background-color: var(--primary);
+            color: white;
+        }
+        
+        .option-btn.correct {
+            background-color: #4CAF50;
+            color: white;
+            border-color: #388E3C;
+        }
+        
+        .option-btn.incorrect {
+            background-color: #F44336;
+            color: white;
+            border-color: #D32F2F;
+        }
+        
+        .feedback {
+            min-height: 30px;
+            font-size: 1.1rem;
+            margin: 15px 0;
+            font-weight: bold;
+        }
+        
+        .feedback.correct {
+            color: var(--primary);
+        }
+        
+        .feedback.incorrect {
+            color: var(--accent);
+        }
+        
+        .next-btn {
+            background-color: var(--accent);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            padding: 12px 25px;
+            font-size: 1rem;
+            cursor: pointer;
+            margin-top: 15px;
+            display: none;
+        }
+        
+        .next-btn:hover {
+            background-color: #C2185B;
+        }
+        
+        .game-over {
+            text-align: center;
+        }
+        
+        .restart-btn {
+            background-color: var(--secondary);
+            color: var(--text);
+            border: none;
+            border-radius: 25px;
+            padding: 12px 25px;
+            font-size: 1rem;
+            cursor: pointer;
+            margin-top: 20px;
+            font-weight: bold;
+        }
+        
+        .restart-btn:hover {
+            background-color: #FFA000;
+        }
+        
+        .volume-control {
+            margin: 15px 0;
+            width: 100%;
+            max-width: 200px;
+        }
+        
+        @media (max-width: 500px) {
+            .game-container {
+                padding: 20px;
+                width: 95%;
+            }
+            
+            .options {
+                grid-template-columns: 1fr;
+            }
+        }
