@@ -49,7 +49,7 @@ let currentSoundIndex = 0;
 let pontuação = 0;
 let audio = new Audio();
 let selectedOpition = null;
-let gameAcrive = true;
+let gameActive = true;
 
 //embaralhar
 function shuffleArray(array) {
@@ -77,7 +77,7 @@ function initGame() {
 
 //carrega o som
 function loadSound() {
-    if(!gameAcetive) return;
+    if(!gameActive) return;
 
     const currentSound = sounds[currentSoundIndex];
     audio.scr = currentSound.sound;
@@ -94,6 +94,49 @@ function loadSound() {
     //atualiza a img descrita no som
     playSoundBtn.setAttribute('aria-label', currentSound.alt);
 
-    //criar opções
+    //criar opções - embaralhadas
+    const shuffledOptions = shuffleArray([...currentSound.option]);
+    const correctIndex = shuffledOptions.indexOf(currentSound.option[currentSound.correct]);
 
+    shuffledOptions.forEach((option, index) => {
+        const btn = document.createElement('button');
+        btn.className = 'opition-btn';
+        btn.textContent = option;
+        btn.addEventListener('click', () => selectedOpition(index, correctIndex));
+        opitionContainer.appendChild(btn);
+    });
+}
+
+//select opção
+function selectedOpition(optionIndex, correctIndex) {
+    if(selectedOpition !== null || !gameActive) return;
+
+    selectedOpition = optionIndex;
+    const currentSound = sound[currentSoundIndex];
+    const optionButtons = document.querySelectorAll('.option-btn');
+
+    //efeito de pont. aleatoria
+    const ramdomPoints = Math.floor(Math.ramdom() * 3) + 1;
+
+    //deasbilita button 
+    optionButtons.forEach(btn => {
+        btn.disabled = true;
+    });
+
+    //marca resposta correta/incorreta
+    if(optionIndex === currentSound.correct) {
+        optionButtons[optionIndex].classList.add('correct');
+        feedbackElement.textContent = `Correto! +${ramdomPoints} pontos!`;
+        feedbackElement.classList.add('correct');
+        score += ramdomPoints;
+        updateScore();
+    }else{
+        optionButtons[optionIndex].classList.add('incorrect'); optionButtons[currentSound.correct].classList.add('correct');
+        feedbackElement.textContent = `Ìncorreto! Era: ${currentSound.options[currentSound.correct]}`;
+        feedbackElement.classList.add('incorrect');
+    }
+
+    //mostrar button de prox.
+    nextBtn.style.display = 'inline-block';
+    playSoundBtn.disabled = true;
 }
