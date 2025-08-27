@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Adivinha sons</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="scrypt.js" defer></script>
+</head>
+<body>
+
+    <div class="interface_inicial">
+        <header>
+            <h1>
+                Jogo de sons
+            </h1>
+            <p>
+                Ouça o som e identifique oque pode ser
+            </p>
+        </header>
+        <div class="pontuacao">
+            Pontuação
+            <span id="pontuacao">0</span>
+        </div>
+        <div class="vol_control">
+            <label for="Volume">Volume:</label>
+            <input type="range" name="volume" id="volume" min="0" max="1" step="0.1" value="0.7">
+        </div>
+        <div class="control_vol">
+            <button id="play-sons" class="btn_sons" aria-label="som de pessoa espirando">🔊</button>
+        </div>
+        <div id="options" class="options">
+           <!--Opções serão inseridas aqui pelo JavaScript-->
+        </div>
+        <div id="feedback" class="feedback"></div>
+        <button id="next-btn" class="next-btn" style="display: none;">Proximo Som</button>
+        <div id="game-over" class="game-over" style="display: none;">
+            <h2>fim de Jogo!</h2>
+            <p>
+                "Sua pontuação final: "
+                <span id="final-pont">0</span>
+            </p>
+            <button id="reset-btn" class="reset-btn">Jogar Novamente</button>
+        </div>
+    </div>
+</body>
+</html>
